@@ -1,0 +1,48 @@
+#pragma once
+
+#include <atomic>
+#include <memory>
+#include <thread>
+
+namespace kat_prl {
+template <typename T>
+class LockFreeStack {
+private:
+  struct Node {
+    std::shared_ptr<Node> next;
+    T data;
+
+    explicit Node(T data) : next(nullptr), data(std::move(data)) {}
+  };
+
+  std::atomic<std::shared_ptr<Node>> head_{nullptr};
+
+public:
+  [[nodiscard]]
+  bool empty() const {
+    return head_.load() == nullptr;
+  }
+
+  void push(T data) {
+    auto new_head = std::make_shared<Node>(std::move(data));
+    new_head->next = head_.load();
+    while (!head_.compare_exchange_weak(new_head->next, new_head)) {
+      std::this_thread::yield();
+    }
+  }
+
+  std::shared_ptr<T> pop() {
+    auto cur = head_.load();
+    while (cur != nullptr && !head_.compare_exchange_weak(cur, cur->next)) {
+      std::this_thread::yield();
+    }
+
+    if (cur == nullptr) {
+      return nullptr;
+    }
+
+    return std::shared_ptr<T>(cur, &cur->data);
+  }
+
+};
+} // namespace kat_prl

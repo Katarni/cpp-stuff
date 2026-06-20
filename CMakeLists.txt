@@ -10,4 +10,5 @@ add_compile_options(-fsanitize=thread)
 add_link_options(-fsanitize=thread)
 
 add_subdirectory(queue)
+add_subdirectory(stack)
 add_subdirectory(test)

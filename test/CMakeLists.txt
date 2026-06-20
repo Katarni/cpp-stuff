@@ -5,6 +5,7 @@ target_sources(parallel-tests
         "test_helper.h"
         PRIVATE
         "lock_queue_test.cpp"
+        "lock_free_stack_test.cpp"
 )
 
 include(FetchContent)
@@ -15,5 +16,5 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-target_link_libraries(parallel-tests PRIVATE queue)
+target_link_libraries(parallel-tests PRIVATE queue stack)
 target_link_libraries(parallel-tests PRIVATE GTest::gtest_main)
