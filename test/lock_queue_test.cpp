@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-constexpr std::size_t kTaskNum = 1000;
+constexpr std::size_t kTaskNum = 10000;
 
 int task_cnt;
 std::mutex produce_tasks_mtx;
@@ -40,9 +40,9 @@ void consume(kat_prl::lock_queue<int>& queue) {
   }
 }
 
-class LockQueueTest : public ::testing::TestWithParam<std::tuple<std::size_t, std::size_t>> {};
+class ThreadTest : public ::testing::TestWithParam<std::pair<std::size_t, std::size_t>> {};
 
-TEST_P(LockQueueTest, SingleTest) {
+TEST_P(ThreadTest, IntTasksTest) {
   task_cnt = kTaskNum;
   consumed_tasks.clear();
 
@@ -73,11 +73,10 @@ TEST_P(LockQueueTest, SingleTest) {
   ASSERT_EQ(consumed_tasks.size(), kTaskNum);
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    LockQueueTest,
-    LockQueueTest,
-    ::testing::Combine(
-        ::testing::Values(1, 2, 4),
-        ::testing::Values(1, 2, 4)
-    )
-);
+INSTANTIATE_TEST_SUITE_P(LockQueueTest, ThreadTest,
+                         ::testing::Values(std::make_pair(1, 1),
+                                           std::make_pair(1, 2),
+                                           std::make_pair(2, 2),
+                                           std::make_pair(2, 4),
+                                           std::make_pair(4, 4),
+                                           std::make_pair(10, 10)));
