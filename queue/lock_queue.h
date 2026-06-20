@@ -50,7 +50,7 @@ public:
     push_conditional_.wait(lock, [this]() { return !full(); });
 
     const auto new_size = size() + 1;
-    buf_[(pos_ + new_size) % capacity()] = elm;
+    buf_[(pos_ + new_size) % capacity()] = std::move(elm);
     size_ = new_size;
     pop_conditional_.notify_one();
   }
@@ -63,7 +63,7 @@ public:
       return false;
     }
 
-    elm = buf_[pos_ % capacity()];
+    elm = std::move(buf_[pos_ % capacity()]);
     ++pos_;
     --size_;
     push_conditional_.notify_one();
