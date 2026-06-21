@@ -49,9 +49,8 @@ public:
     std::unique_lock lock{mtx_};
     push_conditional_.wait(lock, [this]() { return !full(); });
 
-    const auto new_size = size() + 1;
-    buf_[(pos_ + new_size) % capacity()] = std::move(elm);
-    size_ = new_size;
+    buf_[(pos_ + size() + 1) % capacity()] = std::move(elm);
+    ++size_;
     pop_conditional_.notify_one();
   }
 

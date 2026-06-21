@@ -6,7 +6,6 @@
 
 namespace {
 std::atomic<int> task_cnt;
-std::atomic<int> produced_tasks;;
 
 std::mutex consumed_tasks_mtx;
 std::vector<int> consumed_tasks;
@@ -22,12 +21,11 @@ void produce(kat_prl::LockFreeStack<int>& stack) {
     }
 
     stack.push(num);
-    produced_tasks.fetch_add(1);
   }
 }
 
 void consume(kat_prl::LockFreeStack<int>& stack) {
-  while (!(produced_tasks.load() == kTaskNum && stack.empty())) {
+  while (!stack.done() || !stack.empty()) {
     const auto data = stack.pop();
 
     if (!data) {
@@ -44,7 +42,6 @@ class LockFreeStackTest : public ::testing::TestWithParam<std::pair<std::size_t,
 
 TEST_P(LockFreeStackTest, IntTasksTest) {
   task_cnt = kTaskNum;
-  produced_tasks = 0;
   consumed_tasks.clear();
 
   auto [prods_cnt, cons_cnt] = GetParam();
@@ -64,6 +61,7 @@ TEST_P(LockFreeStackTest, IntTasksTest) {
   for (auto& t : prods) {
     t.join();
   }
+  stack.set_done();
   for (auto& t : cons) {
     t.join();
   }

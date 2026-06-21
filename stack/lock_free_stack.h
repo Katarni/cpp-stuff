@@ -16,11 +16,21 @@ private:
   };
 
   std::atomic<std::shared_ptr<Node>> head_{nullptr};
+  std::atomic_flag is_done{};
 
 public:
   [[nodiscard]]
   bool empty() const {
     return head_.load() == nullptr;
+  }
+
+  [[nodiscard]]
+  bool done() const {
+    return is_done.test();
+  }
+
+  void set_done() {
+    is_done.test_and_set();
   }
 
   void push(T data) {
