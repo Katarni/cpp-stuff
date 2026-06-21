@@ -69,8 +69,8 @@ TEST_P(LockQueueTest, IntTasksTest) {
     t.join();
   }
 
-  ASSERT_EQ(task_cnt, 0);
-  ASSERT_EQ(consumed_tasks.size(), kTaskNum);
+  EXPECT_EQ(task_cnt, 0);
+  EXPECT_EQ(consumed_tasks.size(), kTaskNum);
 }
 
 INSTANTIATE_TEST_SUITE_P(ThreadTest, LockQueueTest, ::testing::ValuesIn(threads_nums));

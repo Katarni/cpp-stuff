@@ -1,12 +1,13 @@
-add_executable(parallel-tests)
+add_executable(tests)
 
-target_sources(parallel-tests
+target_sources(tests
         PUBLIC FILE_SET HEADERS FILES
         "test_helper.h"
         PRIVATE
         "lock_queue_test.cpp"
         "lock_free_stack_test.cpp"
         "lock_free_queue_test.cpp"
+        "simple_coroutines_test.cpp"
 )
 
 include(FetchContent)
@@ -17,5 +18,5 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-target_link_libraries(parallel-tests PRIVATE queue stack)
-target_link_libraries(parallel-tests PRIVATE GTest::gtest_main)
+target_link_libraries(tests PRIVATE queue stack coroutines)
+target_link_libraries(tests PRIVATE GTest::gtest_main)

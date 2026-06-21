@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(parallel-stuff)
+project(cpp-stuff)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,4 +11,5 @@ add_link_options(-fsanitize=thread)
 
 add_subdirectory(queue)
 add_subdirectory(stack)
+add_subdirectory(coroutines)
 add_subdirectory(test)
