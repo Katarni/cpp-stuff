@@ -55,7 +55,7 @@ private:
 };
 
 template <typename T>
-class RangeGenerator {
+class ViewGenerator {
 public:
   struct promise_type {
     const T* value;
@@ -98,23 +98,23 @@ public:
     coro_handle_t handle_;
   };
 
-  RangeGenerator(coro_handle_t handle) : handle_(handle) {}
-  RangeGenerator(const RangeGenerator& other) = delete;
-  RangeGenerator(RangeGenerator&& other) noexcept : handle_(other.handle_) { other.handle_ = nullptr; }
-  ~RangeGenerator() {
+  ViewGenerator(coro_handle_t handle) : handle_(handle) {}
+  ViewGenerator(const ViewGenerator& other) = delete;
+  ViewGenerator(ViewGenerator&& other) noexcept : handle_(other.handle_) { other.handle_ = nullptr; }
+  ~ViewGenerator() {
     if (handle_) {
       handle_.destroy();
     }
   }
 
-  RangeGenerator& operator=(const RangeGenerator& other) = delete;
-  RangeGenerator& operator=(RangeGenerator&& other) noexcept {
-    RangeGenerator copy(std::move(other));
+  ViewGenerator& operator=(const ViewGenerator& other) = delete;
+  ViewGenerator& operator=(ViewGenerator&& other) noexcept {
+    ViewGenerator copy(std::move(other));
     swap(copy);
     return *this;
   }
 
-  void swap(RangeGenerator& other) noexcept {
+  void swap(ViewGenerator& other) noexcept {
     using std::swap;
     swap(handle_, other.handle_);
   }
